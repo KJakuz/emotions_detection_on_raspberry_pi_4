@@ -1,6 +1,7 @@
 from fer import FER
 import time
 import webcam as wc
+import servo as srv
 
 if __name__ == "__main__":
     
@@ -8,6 +9,10 @@ if __name__ == "__main__":
     # Użyj src=0 dla domyślnej kamery USB/wbudowanej
     
     vs = wc.WebcamVideoStream(src=0).start()
+
+    #inicjacja servo domyslnie na pinie 18
+
+    servo = srv.ServoController(pin = 18)
 
     # Czasami pierwszych kilka klatek może być nie poprawnych to je omijamy
     print("[INFO] Kamera uruchomiona, czekam 1 sekundę...")
@@ -88,6 +93,12 @@ if __name__ == "__main__":
                         # Print top 3 emotions with confidence scores
                         for emotion_name, score in sorted_emotions[:3]:
                             print(f"  {emotion_name}: {score:.2f}")
+                            
+                            #SERVO TEST
+                        #print(sorted_emotions[0][0])
+                        #print(frame_counter%2)
+                        if sorted_emotions[0][0] == 'happy':
+                            servo.move_to_value(frame_counter%2)
                     
                     last_output_time = current_time
                     
