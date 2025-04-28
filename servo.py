@@ -3,14 +3,14 @@ from gpiozero.pins.pigpio import PiGPIOFactory
 
 
 class ServoController:
-    def __init__(self,pin=18):
+    def __init__(self,pin=18, starting_value = -1):
         self.pin_factory=PiGPIOFactory()
 
         self.servo=Servo(pin,
                          min_pulse_width=500/1_000_000,
                          max_pulse_width=2500/1_000_000,
                          pin_factory=self.pin_factory)
-        self.move_to_mid()
+        self.move_to_value(starting_value)
 
     def move_to_value(self,value):
         value=max(-1,min(1,value))
