@@ -3,8 +3,17 @@ from time import sleep
 import time
 import webcam as wc
 import servo as srv
+import RPi.GPIO as GPIO
 
 if __name__ == "__main__":
+    
+
+    #pin numeration mode (by GPIO names)
+    GPIO.setmode(GPIO.BCM)
+    green_diode = 22 #init pin for green diode
+    GPIO.setup(green_diode,GPIO.OUT)
+    red_diode = 27 
+    GPIO.setup(red_diode,GPIO.OUT)
     
     # create and run videostream from camera
     # src = 0 for default first connected camera (by usb)
@@ -39,11 +48,11 @@ if __name__ == "__main__":
     frame_counter = 0
     
     #frequency of detections
-    process_every_n_frames = 5  # Process every 1th frame
-    output_interval = 0.3 # Output results every x seconds
+    process_every_n_frames = 5  # Process every xth frame
+    output_interval = 0.7 # Output results every x seconds
     last_output_time = time.time()
 
-    #init for twice item gifting prevention system
+    #init for two items gifting prevention system
     person_present = False
     ready_for_new_person = True
     last_time_with_person = time.time()
@@ -52,14 +61,6 @@ if __name__ == "__main__":
     #main loop of program
     try:
         while True:
-
-            #TODO!
-            #diode X expressing that emotion recognition started
-            #GPIO.setmode(GPIO.BCM)
-            #GPIO.setup(17,GPIO.OUT)
-            #GPIO.output(17,GPIO.HIGH)
-            #GPIO.output(17,GPIO.LOW)
-            #GPIO.cleanup()
 
             # get most recent frame from camera
             frame = vs.read()
@@ -89,6 +90,7 @@ if __name__ == "__main__":
                     
                     #face not detected
                     if not emotions:
+                        GPIO.output(green_diode,GPIO.LOW)
                         print("No faces detected")
                         person_present = False
                         #after no_face_timout seconds allow item hand out
@@ -96,6 +98,11 @@ if __name__ == "__main__":
                             ready_for_new_person = True
                     #face detected
                     else:
+
+                        #diode GREEN expressing that the face was found and emotions are recognised
+                        
+                        GPIO.output(green_diode,GPIO.HIGH)
+
                         person_present = True
                         last_time_with_person = current_time
                         
@@ -115,13 +122,9 @@ if __name__ == "__main__":
                                 if ready_for_new_person:
                                     print("[INFO] Happy person detected")
 
-                                    #TODO!
-                                    #diode Y expressing that the item is being given
-                                    #GPIO.setmode(GPIO.BCM)
-                                    #GPIO.setup(17,GPIO.OUT)
-                                    #GPIO.output(17,GPIO.HIGH)
-                                    #GPIO.output(17,GPIO.LOW)
-                                    #GPIO.cleanup()
+                                    
+                                    #diode RED expressing that the item is being given
+                                    GPIO.output(red_diode,GPIO.HIGH)
                                     
                                     servo.move_to_value(move_first)
                                     last_move = move_first
@@ -135,9 +138,9 @@ if __name__ == "__main__":
                                     servo.move_to_value(move_second)
                                     last_move = move_second
 
-                                    #TODO!
-                                    #end lightning up diode Y
                                     
+                                    #end lightning up diode RED
+                                    GPIO.output(red_diode,GPIO.LOW)
 
                                     #wait a x seconds after happy person detected to prevent giving item twice to the same person
                                     ready_for_new_person = False
@@ -155,5 +158,6 @@ if __name__ == "__main__":
     except KeyboardInterrupt:
         print("\n[STOPPING]Stopping emotion detection...")
     finally:
+        GPIO.cleanup()
         vs.stop()
         print("[STOPPING]Resources released. Program terminated.")
