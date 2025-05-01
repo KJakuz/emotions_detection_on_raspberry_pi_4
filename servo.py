@@ -3,7 +3,7 @@ from gpiozero.pins.pigpio import PiGPIOFactory
 
 
 class ServoController:
-    def __init__(self,pin=18, starting_value = -1):
+    def __init__(self,pin=12, starting_value = -1):
         self.pin_factory=PiGPIOFactory()
 
         self.servo=Servo(pin,

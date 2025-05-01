@@ -4,9 +4,9 @@ import time
 import webcam as wc
 import servo as srv
 import RPi.GPIO as GPIO
+from lcd import LcdScreen
 
 if __name__ == "__main__":
-    
 
     #pin numeration mode (by GPIO names)
     GPIO.setmode(GPIO.BCM)
@@ -14,6 +14,12 @@ if __name__ == "__main__":
     GPIO.setup(green_diode,GPIO.OUT)
     red_diode = 27 
     GPIO.setup(red_diode,GPIO.OUT)
+
+    #lcd init
+    lcd=LcdScreen(rs = 25,e = 24,d4 = 23,d5 = 18,d6 = 15,d7 = 14)
+    lcd.display("WYWOLANYCH",1)
+    lcd.display("USMIECHOW:",2)
+    happy_people_counter = 0
     
     # create and run videostream from camera
     # src = 0 for default first connected camera (by usb)
@@ -23,7 +29,7 @@ if __name__ == "__main__":
     #servo init
     servo_start = -1 #swap this to make servo move diffrent values
     #by default servo is on pin 18
-    servo = srv.ServoController(pin = 18, starting_value= servo_start)
+    servo = srv.ServoController(pin = 12, starting_value= servo_start)
     last_move = servo_start 
     move_first = -1 * servo_start
     move_second = servo_start
@@ -130,8 +136,10 @@ if __name__ == "__main__":
                                     last_move = move_first
                                     
                                     
-                                    #TODO!
-                                    #increment number on display
+                                    #increment lcd screen counter
+                                    happy_people_counter += 1
+                                    lcd.display("WYWOLANYCH",1)
+                                    lcd.display("USMIECHOW: "+str(happy_people_counter),2)
                                     
                                     time.sleep(2) #time to get item through hole
 
