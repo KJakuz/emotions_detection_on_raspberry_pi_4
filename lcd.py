@@ -31,10 +31,12 @@ class LcdScreen:
         self.pi.write(self.RS,mode)
         self.write4(val>>4)
         self.write4(val&0x0F)
-        sleep(0.001)
+        sleep(0.01)
 
     #init lcd screen to 4 bit mode
     def init(self):
+        sleep(0.05)
+        self.send(0x01,0)  # clean screen
         sleep(0.05)
         for _ in range(3):
             self.write4(0x03)
@@ -51,3 +53,19 @@ class LcdScreen:
         self.send(addr,0)   #sets cursor to line 1 or 2
         for c in text.ljust(16)[:16]:   #ljust adds spaces to 16 letters
             self.send(ord(c),1)         #sends ascii code
+
+
+#tests
+if __name__ == '__main__':
+    lcd=LcdScreen(rs = 25,e = 24,d4 = 23,d5 = 18,d6 = 15,d7 = 14)
+    happy_people_counter = 0
+
+    lcd.display("WYWOLANYCH",1)
+    lcd.display("USMIECHOW:",2)
+
+
+    for i in range(50):
+        happy_people_counter += 1
+        lcd.display("WYWOLANYCH",1)
+        lcd.display("USMIECHOW: "+str(happy_people_counter),2)
+        sleep(1)

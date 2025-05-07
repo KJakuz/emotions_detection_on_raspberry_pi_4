@@ -85,3 +85,27 @@ class WebcamVideoStream:
         if self.stream.isOpened():
             self.stream.release()
         print(f"[INFO] Wątek {self.name} zatrzymany, strumień zwolniony.")
+
+
+#test
+if __name__ == '__main__':
+    print("[TEST] Uruchamiam test kamery...")
+    vs=WebcamVideoStream(src=0).start()
+    time.sleep(1.0)  # daj kamerze chwilę na wystartowanie
+
+    try:
+        while True:
+            frame=vs.read()
+            if frame is None:
+                print("[WARNING] Brak klatki.")
+                continue
+            cv2.imshow("Podglad z kamery",frame)
+            # Zatrzymaj program po naciśnięciu klawisza 'q'
+            if cv2.waitKey(1)&0xFF==ord('q'):
+                break
+    except KeyboardInterrupt:
+        print("\n[STOP] Przerwano przez użytkownika.")
+    finally:
+        vs.stop()
+        cv2.destroyAllWindows()
+        print("[TEST] Kamera zatrzymana.")

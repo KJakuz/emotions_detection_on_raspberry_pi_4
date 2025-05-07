@@ -27,12 +27,17 @@ if __name__ == "__main__":
     vs = wc.WebcamVideoStream(src=0).start()
 
     #servo init
-    servo_start = -1 #swap this to make servo move diffrent values
-    #by default servo is on pin 18
-    servo = srv.ServoController(pin = 12, starting_value= servo_start)
-    last_move = servo_start 
-    move_first = -1 * servo_start
-    move_second = servo_start
+    servo_upper_start = -1 #swap this to make servo move diffrent values
+    servo_upper = srv.ServoController(pin = 12, starting_value= servo_upper_start)
+    last_upper_move = servo_upper_start 
+    move_upper_first = -1 * servo_upper_start
+    move_upper_second = servo_upper_start
+
+    servo_lower_start = -1 #swap this to make servo move diffrent values
+    servo_lower = srv.ServoController(pin = 13, starting_value= servo_lower_start)
+    last_lower_move = servo_lower_start 
+    move_lower_first = -1 * servo_lower_start
+    move_lower_second = servo_lower_start
 
     # skip first few frames
     print("[INFO] Kamera uruchomiona, czekam 1 sekundę...")
@@ -132,21 +137,32 @@ if __name__ == "__main__":
                                     #diode RED expressing that the item is being given
                                     GPIO.output(red_diode,GPIO.HIGH)
                                     
-                                    servo.move_to_value(move_first)
-                                    last_move = move_first
-                                    
-                                    
                                     #increment lcd screen counter
                                     happy_people_counter += 1
                                     lcd.display("WYWOLANYCH",1)
                                     lcd.display("USMIECHOW: "+str(happy_people_counter),2)
-                                    
-                                    time.sleep(2) #time to get item through hole
 
-                                    servo.move_to_value(move_second)
-                                    last_move = move_second
-
+                                    #item dispensing - upper servo first
+                                    servo_upper.move_to_value(move_upper_first)
+                                    last_move = move_upper_first
                                     
+                                    time.sleep(1) #time to get item through first servo
+
+                                    servo_upper.move_to_value(move_upper_second)
+                                    last_move = move_upper_second
+
+                                    time.sleep(1.5) #time between first servo closing tube and second servo opening it
+
+                                    #item dispensing - lower servo
+                                    servo_lower.move_to_value(move_lower_first)
+                                    last_move = move_lower_first
+                                    
+                                    time.sleep(2) #time to get item through second servo
+
+                                    servo_lower.move_to_value(move_lower_second)
+                                    last_move = move_lower_second
+
+                                    time.sleep(1.5) #bufor for diode
                                     #end lightning up diode RED
                                     GPIO.output(red_diode,GPIO.LOW)
 
@@ -155,13 +171,10 @@ if __name__ == "__main__":
                                     #sleep for x seconds to give a moment to change person
                                     #time.sleep(5)
 
-
-
-
-
                         last_output_time = current_time
                         
                 
+
     #zakonczenie dzialania programu/uwolnienie zasobow
     except KeyboardInterrupt:
         print("\n[STOPPING]Stopping emotion detection...")
