@@ -36,12 +36,12 @@ from time import sleep
 if __name__=="__main__":
     print("[TEST] Uruchamianie testu serwa...")
 
-    servo_upper_start = -1 #swap this to make servo move diffrent values
+    servo_upper_start = 0.5 #swap this to make servo move diffrent values
     last_upper_move = servo_upper_start 
     move_upper_first = -1 * servo_upper_start
     move_upper_second = servo_upper_start
 
-    servo_lower_start = -1 #swap this to make servo move diffrent values
+    servo_lower_start = 0.5 #swap this to make servo move diffrent values
     last_lower_move = servo_lower_start 
     move_lower_first = -1 * servo_lower_start
     move_lower_second = servo_lower_start
@@ -76,13 +76,13 @@ if __name__=="__main__":
             elif opcja=="3":
                 servo_upper.move_to_value(move_upper_first)
                 last_move = move_upper_first
-                sleep(1) #time to get item through first servo
+                sleep(0.15) #time to get item through first servo
                 servo_upper.move_to_value(move_upper_second)
                 last_move = move_upper_second
                 sleep(1.5) #time between first servo closing tube and second servo opening it
                 servo_lower.move_to_value(move_lower_first)
                 last_move = move_lower_first
-                sleep(2) #time to get item through second servo
+                sleep(1) #time to get item through second servo
                 servo_lower.move_to_value(move_lower_second)
                 last_move = move_lower_second
 

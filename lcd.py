@@ -48,6 +48,20 @@ class LcdScreen:
         self.send(0x01,0)   #cursor on start and clean screen
         sleep(0.01)
 
+    def clear(self):
+        sleep(0.02)
+        self.send(0x01,0)  # clean screen
+        sleep(0.02)
+        for _ in range(3):
+            self.write4(0x03)
+            sleep(0.005)
+        self.write4(0x02)
+        self.send(0x28,0)   #2 lines 5x8 pixel font
+        self.send(0x0C,0)   #cursor migotanie off
+        self.send(0x06,0)   #cursor moves to right after writing letter
+        self.send(0x01,0)   #cursor on start and clean screen
+        sleep(0.01)
+
     def display(self,text,line=1):
         addr=0x80 if line==1 else 0xC0 #ddram in scrren needs that
         self.send(addr,0)   #sets cursor to line 1 or 2
